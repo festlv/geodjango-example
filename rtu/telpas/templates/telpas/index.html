@@ -1,0 +1,59 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+        <title>Datu vizualizācija ar OpenLayers</title>
+        
+        <link rel="stylesheet" href="{% static "css/openlayers/default/style.css" %}" type="text/css">
+        <script src="{% static "js/OpenLayers.js" %}"></script>
+ <style>
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+        #map {
+            height: 350px;
+            background-color: #eee;
+        }
+        .olControlAttribution {
+            bottom: 3px;
+            left: 10px;
+            line-height: 9px;
+            font-size: 9px;
+            color: #ccc;
+        }
+    </style>
+    <script type="text/javascript">
+        var lon = 5;
+        var lat = 40;
+        var zoom = 5;
+        var map, layer;
+
+        function init(){
+            OpenLayers.ImgPath = "/static/css/openlayers/default/img/";
+
+            map = new OpenLayers.Map('map');
+            layer = new OpenLayers.Layer.WMS( "OpenLayers WMS", 
+                    "http://vmap0.tiles.osgeo.org/wms/vmap0",
+                    {layers: 'basic'} );
+            map.addLayer(layer);
+            map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
+            var featurecollection = {{geojson}};
+            var geojson_format = new OpenLayers.Format.GeoJSON();
+            var vector_layer = new OpenLayers.Layer.Vector(); 
+            map.addLayer(vector_layer);
+            vector_layer.addFeatures(geojson_format.read(featurecollection));
+        }
+    </script>
+    </head>
+    <body onload="init()">
+        <h1 id="title">Datu vizualizācija ar OpenLayers</h1>
+        <div id="map" style="width:100%;min-height:500px;" class="smallmap"></div>    
+
+   </body>
+</html>
+
